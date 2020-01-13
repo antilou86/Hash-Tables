@@ -1,6 +1,8 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+import types
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
@@ -51,8 +53,19 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
 
+        if self.storage[hashed_key]:
+            first_link = LinkedPair(key, self.storage[hashed_key])
+            second_link = LinkedPair(key, value) 
+            first_link.next = second_link
+            self.storage[hashed_key] = first_link
+            return            
+        else:
+            # for i in range(0, len(self.storage), 1):
+            #     self.storage[i] = self.storage[i-1]
+            self.storage[hashed_key] = value
+            return
 
 
     def remove(self, key):
@@ -63,8 +76,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        if key not in self.storage:
+            print('Sorry, we cannot delete what does not exist.')
+            return
+        else:
+            #if the key is a linked pair, remove the last one?
+            
+            #beyond that, we would just want to remove the dang thing
+            self.storage[self._hash_mod(key)] = None
+            return 
 
     def retrieve(self, key):
         '''
@@ -74,8 +94,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        search_item = self.storage[self._hash_mod(key)]
+        if search_item:
+            if isinstance(search_item, str):
+                return search_item
+            else:
+                if search_item.key == key:
+                    return search_item.value
+                else:
+                    return search_item.next.value
+        else:
+            return None
 
     def resize(self):
         '''
@@ -85,8 +114,8 @@ class HashTable:
         Fill this in.
         '''
         pass
-
-
+    
+    
 
 if __name__ == "__main__":
     ht = HashTable(2)

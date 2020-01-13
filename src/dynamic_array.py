@@ -31,6 +31,6 @@ class DynamicArray:
     def slice_index(self, beginning_index, end_index):
         new_storage = [None] * self.capacity
         for i in range(beginning_index, end_index):
-            new_storage.append(self.storage[i])
+            new_storage = new_storage + self.storage[i]
         return new_storage
     
