@@ -24,7 +24,6 @@ class TestHashTable(unittest.TestCase):
         return_value = ht.retrieve("key-1")
         self.assertTrue(return_value == "val-1")
         return_value = ht.retrieve("key-2")
-        print(f"{return_value}")
         self.assertTrue(return_value == "val-2")
         return_value = ht.retrieve("key-3")
         self.assertTrue(return_value == "val-3")
