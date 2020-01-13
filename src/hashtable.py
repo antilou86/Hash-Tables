@@ -131,7 +131,16 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        temp_storage = self.storage
+        self.storage = self.capacity * [None]
+
+
+        for each_key in temp_storage :
+            current_key = each_key
+            while current_key: 
+                self.insert(current_key.key, current_key.value)
+                current_key = current_key.next
     
     
 
