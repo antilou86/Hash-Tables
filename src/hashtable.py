@@ -17,6 +17,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -55,18 +56,15 @@ class HashTable:
         '''
         hashed_key = self._hash_mod(key)
 
-        if self.storage[hashed_key]:
-            first_link = LinkedPair(key, self.storage[hashed_key])
-            second_link = LinkedPair(key, value) 
-            first_link.next = second_link
-            self.storage[hashed_key] = first_link
-            return            
+        if self.storage[hashed_key] is not None:
+            new_link = LinkedPair(key, value)
+            new_link.next = self.storage[hashed_key]
+            self.storage[hashed_key] = new_link
         else:
             # for i in range(0, len(self.storage), 1):
             #     self.storage[i] = self.storage[i-1]
-            self.storage[hashed_key] = value
-            return
-
+            self.storage[hashed_key] = LinkedPair(key, value)
+            self.count += 1
 
     def remove(self, key):
         '''
@@ -76,15 +74,37 @@ class HashTable:
 
         Fill this in.
         '''
-        if key not in self.storage:
+        hashed_key = self._hash_mod(key)
+        if self.storage[hashed_key] == None:
             print('Sorry, we cannot delete what does not exist.')
-            return
         else:
-            #if the key is a linked pair, remove the last one?
-            
-            #beyond that, we would just want to remove the dang thing
-            self.storage[self._hash_mod(key)] = None
-            return 
+            temp = None
+            currentKey = self.storage[hashed_key]
+            #loop through the list until you hit the matching key
+            while currentKey:
+                if currentKey.key == key:
+                    if currentKey.next != None: 
+                        if temp == None: 
+                            self.storage[hashed_key] = currentKey.next
+                            self.count -= 1
+                            return
+                        else: 
+                            temp.next = currentKey.next
+                            self.count -= 1
+                            return
+                    else:
+                        if temp == None:
+                            self.storage[hashed_key] = None
+                            self.count -= 1
+                            return
+                        else: 
+                            temp.next = None
+                            self.count -= 1
+                            return
+                else: 
+                    temp = currentKey
+                    currentKey = currentKey.next
+            print("key not found")
 
     def retrieve(self, key):
         '''
@@ -94,17 +114,15 @@ class HashTable:
 
         Fill this in.
         '''
-        search_item = self.storage[self._hash_mod(key)]
-        if search_item:
-            if isinstance(search_item, str):
-                return search_item
+        hashed_key = self._hash_mod(key)
+        currentKey = self.storage[hashed_key]
+
+        while currentKey:
+            if currentKey.key != key:
+                currentKey = currentKey.next
             else:
-                if search_item.key == key:
-                    return search_item.value
-                else:
-                    return search_item.next.value
-        else:
-            return None
+                return currentKey.value
+        return None
 
     def resize(self):
         '''
