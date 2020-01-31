@@ -1,6 +1,8 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+import types
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
@@ -15,6 +17,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -51,9 +54,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
 
-
+        if self.storage[hashed_key] is not None:
+            new_link = LinkedPair(key, value)
+            new_link.next = self.storage[hashed_key]
+            self.storage[hashed_key] = new_link
+        else:
+            # for i in range(0, len(self.storage), 1):
+            #     self.storage[i] = self.storage[i-1]
+            self.storage[hashed_key] = LinkedPair(key, value)
+            self.count += 1
 
     def remove(self, key):
         '''
@@ -63,8 +74,37 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        hashed_key = self._hash_mod(key)
+        if self.storage[hashed_key] == None:
+            print('Sorry, we cannot delete what does not exist.')
+        else:
+            temp = None
+            currentKey = self.storage[hashed_key]
+            #loop through the list until you hit the matching key
+            while currentKey:
+                if currentKey.key == key:
+                    if currentKey.next != None: 
+                        if temp == None: 
+                            self.storage[hashed_key] = currentKey.next
+                            self.count -= 1
+                            return
+                        else: 
+                            temp.next = currentKey.next
+                            self.count -= 1
+                            return
+                    else:
+                        if temp == None:
+                            self.storage[hashed_key] = None
+                            self.count -= 1
+                            return
+                        else: 
+                            temp.next = None
+                            self.count -= 1
+                            return
+                else: 
+                    temp = currentKey
+                    currentKey = currentKey.next
+            print("key not found")
 
     def retrieve(self, key):
         '''
@@ -74,8 +114,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+        currentKey = self.storage[hashed_key]
 
+        while currentKey:
+            if currentKey.key != key:
+                currentKey = currentKey.next
+            else:
+                return currentKey.value
+        return None
 
     def resize(self):
         '''
@@ -84,9 +131,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        temp_storage = self.storage
+        self.storage = self.capacity * [None]
 
 
+        for each_key in temp_storage :
+            current_key = each_key
+            while current_key: 
+                self.insert(current_key.key, current_key.value)
+                current_key = current_key.next
+    
+    
 
 if __name__ == "__main__":
     ht = HashTable(2)
